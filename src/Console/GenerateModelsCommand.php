@@ -133,7 +133,7 @@ class GenerateModelsCommand extends GeneratorCommand {
 
 
             $filePathToGenerate = $this->getFileGenerationPath();
-            $filePathToGenerate .= '/Models/' . $modelName . '.php';
+            $filePathToGenerate .= '/' . $modelName . '.php';
 
             $templateData = array(
                 'NAMESPACE' => $namespace,
@@ -254,7 +254,7 @@ class GenerateModelsCommand extends GeneratorCommand {
     }
 
     private function generateModelNameFromTableName($table) {
-        return camel_case($table);
+        return ucwords(camel_case($table));
     }
 
 
