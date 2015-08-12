@@ -5,10 +5,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
 use Way\Generators\Commands\GeneratorCommand;
-use \Way\Generators\Generator;
-use \Way\Generators\Filesystem\Filesystem;
-use \Way\Generators\Compilers\TemplateCompiler;
-use \Illuminate\Config\Repository as Config;
+use Way\Generators\Generator;
+use Way\Generators\Filesystem\Filesystem;
+use Way\Generators\Compilers\TemplateCompiler;
+use Illuminate\Contracts\Config\Repository as Config;
 use Xethron\MigrationsGenerator\Generators\SchemaGenerator;
 
 class GenerateModelsCommand extends GeneratorCommand {
@@ -29,10 +29,10 @@ class GenerateModelsCommand extends GeneratorCommand {
 
     private $schemaGenerator;
     /**
-     * @param \Way\Generators\Generator  $generator
-     * @param \Way\Generators\Filesystem\Filesystem  $file
-     * @param \Way\Generators\Compilers\TemplateCompiler  $compiler
-     * @param \Illuminate\Config\Repository  $config
+     * @param Generator  $generator
+     * @param Filesystem  $file
+     * @param TemplateCompiler  $compiler
+     * @param Config  $config
      */
     public function __construct(
         Generator $generator,
@@ -115,7 +115,7 @@ class GenerateModelsCommand extends GeneratorCommand {
             $belongsTo = $rules['belongsTo'];
             $belongsToMany = $rules['belongsToMany'];
 
-            $namespace = env('APP_NAME','App');
+            $namespace = env('APP_NAME','App\Models');
             $modelName = $this->generateModelNameFromTableName($table);
             $fillable = implode(', ', $rules['fillable']);
 
@@ -133,7 +133,7 @@ class GenerateModelsCommand extends GeneratorCommand {
 
 
             $filePathToGenerate = $this->getFileGenerationPath();
-            $filePathToGenerate .= '/' . $modelName . '.php';
+            $filePathToGenerate .= '/Models/' . $modelName . '.php';
 
             $templateData = array(
                 'NAMESPACE' => $namespace,
@@ -246,30 +246,16 @@ class GenerateModelsCommand extends GeneratorCommand {
     }
 
     private function getPluralFunctionName($modelName) {
-//        $pluralFunctionName = lcfirst($modelName);
-//        $pluralFunctionName = rtrim($pluralFunctionName, 's') . 's'; //@todo: this should use a dictionnary lib
-        return camel_case($modelName);
+        return str_plural($modelName);
     }
 
     private function getSingularFunctionName($modelName) {
-//        $singularFunctionName = lcfirst($modelName);
-//        $singularFunctionName = rtrim($singularFunctionName, 's'); //@todo: this should use a dictionnary lib
-        return camel_case($modelName);
+        return str_singular($modelName);
     }
 
     private function generateModelNameFromTableName($table) {
-//        $modelName = strtolower($table);
-//        //$modelName = ucfirst($modelName);
-//
-//        $modelName = $this->snakeToCamel($modelName);
-//
-//        $modelName = rtrim($modelName, 's');
         return camel_case($table);
     }
-
-//    private function snakeToCamel($val) {
-//        return str_replace(' ', '', ucwords(str_replace('_', ' ', $val)));
-//    }
 
 
     private function getColumnsPrimaryAndForeignKeysPerTable($tables) {
